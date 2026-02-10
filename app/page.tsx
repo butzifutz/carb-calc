@@ -70,21 +70,30 @@ export default function CarbCalcPage() {
 
   return (
     <>
-      <main className="max-w-[600px] mx-auto px-3 pt-3 pb-[160px]">
+      <main className="max-w-[600px] mx-auto px-3 pt-3 pb-[80px]">
         {/* Quick Add */}
         <QuickAddButtons topFavorites={topFavorites} onQuickAdd={handleQuickAdd} />
 
         {/* Rows Container */}
         <div className="bg-card rounded-xl p-3 mb-3 shadow-md">
           {store.rows.length === 0 ? (
-            <div className="text-center py-8" role="status">
-              <UtensilsCrossed className="h-12 w-12 mx-auto text-muted-foreground/40 mb-3" />
+            <div className="text-center py-6" role="status">
+              <UtensilsCrossed className="h-10 w-10 mx-auto text-muted-foreground/40 mb-2" />
               <p className="text-muted-foreground text-sm">
-                {"Keine Eintr\u00e4ge. Tippe auf \u201eHinzuf\u00fcgen\u201c, um zu starten."}
+                {"Keine Eintr\u00e4ge. Tippe auf \u201eNeu\u201c, um zu starten."}
               </p>
             </div>
           ) : (
-            <div className="flex flex-col gap-1.5 md:gap-0">
+            <div className="flex flex-col">
+              {/* Column headers */}
+              <div className="flex items-center gap-1.5 pb-1.5 mb-0.5 border-b border-border">
+                <span className="w-[60px] text-[10px] text-muted-foreground font-semibold uppercase text-center">Gramm</span>
+                <span className="flex-1 min-w-0 text-[10px] text-muted-foreground font-semibold uppercase">Typ</span>
+                <span className="w-[52px] text-[10px] text-muted-foreground font-semibold uppercase text-center">Wert</span>
+                <span className="w-[52px] text-[10px] text-muted-foreground font-semibold uppercase text-right">KH</span>
+                <span className="w-8" />
+                <span className="w-8" />
+              </div>
               {store.rows.map((row) => (
                 <CarbRow
                   key={row.id}
@@ -115,47 +124,50 @@ export default function CarbCalcPage() {
 
       {/* Fixed Bottom Action Bar */}
       <footer className="fixed bottom-0 left-0 right-0 bg-card border-t border-border shadow-[0_-2px_8px_rgba(0,0,0,0.05)] z-40">
-        <div className="max-w-[600px] mx-auto px-4 py-3">
-          {/* Total Display */}
-          <div className="text-center pb-3 mb-3 border-b border-border">
-            <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wide mr-2">
-              Gesamt
-            </span>
-            <span className="text-3xl font-extrabold text-primary">
-              {store.totalCarbs.toFixed(1)}
-            </span>
-            <span className="text-sm text-muted-foreground ml-1">g</span>
-          </div>
+        <div className="max-w-[600px] mx-auto px-3 py-2">
+          {/* Row 1: Total + Action Buttons */}
+          <div className="flex items-center gap-2">
+            {/* Total */}
+            <div className="flex items-baseline gap-1 mr-auto pl-1">
+              <span className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wide">
+                KH
+              </span>
+              <span className="text-2xl font-extrabold text-primary tabular-nums">
+                {store.totalCarbs.toFixed(1)}
+              </span>
+              <span className="text-xs text-muted-foreground">g</span>
+            </div>
 
-          {/* Buttons */}
-          <div className="grid grid-cols-2 gap-3">
+            {/* Favorites toggle */}
+            <button
+              type="button"
+              onClick={() => setShowFavorites(!showFavorites)}
+              className="h-10 w-10 flex items-center justify-center rounded-lg border border-border text-muted-foreground active:bg-muted transition-colors"
+              aria-label="Favoriten anzeigen"
+            >
+              <Star className="h-4 w-4" />
+            </button>
+
+            {/* Clear */}
             <button
               type="button"
               onClick={handleClear}
-              className="flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl bg-muted text-card-foreground font-semibold text-[15px] active:bg-muted/70 transition-colors min-h-[52px]"
+              className="h-10 w-10 flex items-center justify-center rounded-lg bg-muted text-card-foreground active:bg-muted/70 transition-colors"
+              aria-label="Alle Eintraege loeschen"
             >
               <Trash2 className="h-4 w-4" />
-              {"L\u00f6schen"}
             </button>
+
+            {/* Add */}
             <button
               type="button"
               onClick={() => store.addRow()}
-              className="flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold text-[15px] active:opacity-90 transition-opacity min-h-[52px]"
+              className="h-10 px-5 flex items-center justify-center gap-1.5 rounded-lg bg-primary text-primary-foreground font-semibold text-sm active:opacity-90 transition-opacity"
             >
               <Plus className="h-4 w-4" />
-              {"Hinzuf\u00fcgen"}
+              Neu
             </button>
           </div>
-
-          {/* Favorites toggle */}
-          <button
-            type="button"
-            onClick={() => setShowFavorites(!showFavorites)}
-            className="w-full mt-2 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg border border-border bg-card text-sm font-semibold text-muted-foreground active:bg-muted transition-colors"
-          >
-            <Star className="h-4 w-4" />
-            Favoriten
-          </button>
         </div>
       </footer>
 

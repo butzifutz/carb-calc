@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react"
 import { useCarbStore } from "@/hooks/use-carb-store"
-import type { CarbRow as CarbRowType } from "@/hooks/use-carb-store"
+import type { CarbRow as CarbRowType, Favorite } from "@/hooks/use-carb-store"
 import { QuickAddButtons } from "@/components/quick-add-buttons"
 import { CarbRow } from "@/components/carb-row"
 import { FavoritesManager } from "@/components/favorites-manager"
@@ -23,7 +23,7 @@ export default function CarbCalcPage() {
       store.trackUsage(name, weight)
       store.addRow({ name, weight, type, value })
     },
-    [store]
+    [store],
   )
 
   const handleSaveFavorite = useCallback((row: CarbRowType) => {
@@ -43,14 +43,21 @@ export default function CarbCalcPage() {
       setModalOpen(false)
       setModalRow(null)
     },
-    [modalRow, store]
+    [modalRow, store],
+  )
+
+  const handleLoadFavorite = useCallback(
+    (rowId: string, fav: Favorite) => {
+      store.updateRow(rowId, { type: fav.type, value: fav.value, name: fav.name })
+    },
+    [store],
   )
 
   const handleWeightCommit = useCallback(
     (name: string, weight: number) => {
       store.trackUsage(name, weight)
     },
-    [store]
+    [store],
   )
 
   const handleClear = useCallback(() => {
@@ -85,15 +92,6 @@ export default function CarbCalcPage() {
             </div>
           ) : (
             <div className="flex flex-col">
-              {/* Column headers */}
-              <div className="flex items-center gap-1.5 pb-1.5 mb-0.5 border-b border-border">
-                <span className="w-[60px] text-[10px] text-muted-foreground font-semibold uppercase text-center">Gramm</span>
-                <span className="flex-1 min-w-0 text-[10px] text-muted-foreground font-semibold uppercase">Typ</span>
-                <span className="w-[52px] text-[10px] text-muted-foreground font-semibold uppercase text-center">Wert</span>
-                <span className="w-[52px] text-[10px] text-muted-foreground font-semibold uppercase text-right">KH</span>
-                <span className="w-8" />
-                <span className="w-8" />
-              </div>
               {store.rows.map((row) => (
                 <CarbRow
                   key={row.id}
@@ -102,6 +100,7 @@ export default function CarbCalcPage() {
                   onUpdate={store.updateRow}
                   onDelete={store.deleteRow}
                   onSaveFavorite={handleSaveFavorite}
+                  onLoadFavorite={handleLoadFavorite}
                   onWeightCommit={handleWeightCommit}
                 />
               ))}
@@ -125,7 +124,6 @@ export default function CarbCalcPage() {
       {/* Fixed Bottom Action Bar */}
       <footer className="fixed bottom-0 left-0 right-0 bg-card border-t border-border shadow-[0_-2px_8px_rgba(0,0,0,0.05)] z-40">
         <div className="max-w-[600px] mx-auto px-3 py-2">
-          {/* Row 1: Total + Action Buttons */}
           <div className="flex items-center gap-2">
             {/* Total */}
             <div className="flex items-baseline gap-1 mr-auto pl-1">
@@ -138,12 +136,12 @@ export default function CarbCalcPage() {
               <span className="text-xs text-muted-foreground">g</span>
             </div>
 
-            {/* Favorites toggle */}
+            {/* Manage favorites */}
             <button
               type="button"
               onClick={() => setShowFavorites(!showFavorites)}
               className="h-10 w-10 flex items-center justify-center rounded-lg border border-border text-muted-foreground active:bg-muted transition-colors"
-              aria-label="Favoriten anzeigen"
+              aria-label="Favoriten verwalten"
             >
               <Star className="h-4 w-4" />
             </button>

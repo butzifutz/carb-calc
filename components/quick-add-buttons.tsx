@@ -20,8 +20,8 @@ export function QuickAddButtons({ topFavorites, onQuickAdd }: QuickAddButtonsPro
   return (
     <section className="mb-3" aria-label="Schnell hinzufügen">
       <div className="flex items-center gap-1.5 mb-2">
-        <Zap className="h-3.5 w-3.5 text-foreground/80" />
-        <span className="text-[11px] text-foreground/80 font-semibold uppercase tracking-wide">
+        <Zap className="h-4 w-4 text-foreground/80" />
+        <span className="text-xs text-foreground/80 font-semibold uppercase tracking-wide">
           Schnell hinzufügen
         </span>
       </div>
@@ -33,9 +33,9 @@ export function QuickAddButtons({ topFavorites, onQuickAdd }: QuickAddButtonsPro
               key={fav.name}
               type="button"
               onClick={() => onQuickAdd(fav.name, fav.avgWeight, fav.type, fav.value)}
-              className="bg-card text-card-foreground rounded-lg px-2 py-2.5 text-xs font-semibold shadow-sm active:scale-95 transition-transform min-h-[56px] md:min-h-[60px] flex flex-col items-center justify-center"
+              className="bg-card text-card-foreground rounded-lg px-3 py-3 text-sm font-semibold shadow-sm active:scale-95 transition-transform min-h-[60px] flex flex-col items-center justify-center"
             >
-              <span className="text-lg md:text-xl font-bold text-primary block mb-0.5">
+              <span className="text-xl font-bold text-primary block mb-0.5">
                 {avgCarbs.toFixed(0)}g
               </span>
               <span className="truncate max-w-full">{fav.name}</span>

@@ -23,12 +23,12 @@ export function HistorySection({ history }: HistorySectionProps) {
         {history.slice(0, 5).map((entry, index) => (
           <li key={`${entry.date}-${index}`} className="flex items-center justify-between py-2.5">
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-muted-foreground truncate">
+              <p className="text-sm text-card-foreground truncate">
                 {entry.items.map((i) => i.name).join(", ")}
               </p>
-              <p className="text-xs text-muted-foreground/60">{entry.date}</p>
+              <p className="text-xs text-muted-foreground">{entry.date}</p>
             </div>
-            <span className="font-bold text-primary text-sm ml-3">
+            <span className="font-bold text-primary text-base ml-3">
               {entry.total.toFixed(1)}g
             </span>
           </li>

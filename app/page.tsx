@@ -77,7 +77,7 @@ export default function CarbCalcPage() {
 
   return (
     <>
-      <main className="max-w-[600px] mx-auto px-3 pt-3 pb-[80px]">
+      <main className="max-w-[600px] mx-auto px-3 pt-3 pb-[100px]">
         {/* Quick Add */}
         <QuickAddButtons topFavorites={topFavorites} onQuickAdd={handleQuickAdd} />
 
@@ -122,18 +122,18 @@ export default function CarbCalcPage() {
       </main>
 
       {/* Fixed Bottom Action Bar */}
-      <footer className="fixed bottom-0 left-0 right-0 bg-card border-t border-border shadow-[0_-2px_8px_rgba(0,0,0,0.05)] z-40">
-        <div className="max-w-[600px] mx-auto px-3 py-2">
+      <footer className="fixed bottom-0 left-0 right-0 bg-card border-t border-border shadow-[0_-2px_8px_rgba(0,0,0,0.05)] z-40 pb-[env(safe-area-inset-bottom,24px)]">
+        <div className="max-w-[600px] mx-auto px-3 py-2.5">
           <div className="flex items-center gap-2">
             {/* Total */}
             <div className="flex items-baseline gap-1 mr-auto pl-1">
-              <span className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wide">
+              <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">
                 KH
               </span>
               <span className="text-2xl font-extrabold text-primary tabular-nums">
                 {store.totalCarbs.toFixed(1)}
               </span>
-              <span className="text-xs text-muted-foreground">g</span>
+              <span className="text-sm text-muted-foreground">g</span>
             </div>
 
             {/* Manage favorites */}

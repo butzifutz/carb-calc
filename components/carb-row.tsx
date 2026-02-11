@@ -12,16 +12,6 @@ const TYPE_LABELS: Record<CarbRowType["type"], string> = {
 
 const TYPE_ORDER: CarbRowType["type"][] = ["KH100", "TEILER", "FAKTOR"]
 
-/**
- * Convert a value from one type to another so that the KH result stays the same.
- *
- * All types express the same concept — "how many g carbs per g food" — but differently:
- *   KH100:  factor = value / 100     (value = g carbs per 100 g)
- *   FAKTOR: factor = value            (value = direct multiplier)
- *   TEILER: factor = 1 / value        (value = divisor)
- *
- * So to convert we first get the factor from the old type, then convert it to the new type.
- */
 function convertValue(
   oldType: CarbRowType["type"],
   newType: CarbRowType["type"],
@@ -29,7 +19,6 @@ function convertValue(
 ): number {
   if (oldType === newType || value === 0) return value
 
-  // Old value -> factor
   let factor = 0
   if (oldType === "KH100") factor = value / 100
   else if (oldType === "FAKTOR") factor = value
@@ -37,7 +26,6 @@ function convertValue(
 
   if (factor === 0) return 0
 
-  // Factor -> new value
   if (newType === "KH100") return Math.round(factor * 100 * 1000) / 1000
   if (newType === "FAKTOR") return Math.round(factor * 1000) / 1000
   if (newType === "TEILER" && factor !== 0) return Math.round((1 / factor) * 1000) / 1000
@@ -83,18 +71,18 @@ export function CarbRow({
 
   return (
     <>
-      <div className="py-2 border-b border-border last:border-b-0">
-        {/* Row 1: Weight | Value | KH result | Delete */}
-        <div className="flex items-center gap-1.5">
-          {/* Name badge (if favorite loaded) */}
-          {row.name && (
-            <span className="text-[11px] font-semibold text-primary bg-primary/10 rounded px-1.5 py-0.5 truncate max-w-[80px]">
-              {row.name}
-            </span>
-          )}
+      <div className="py-2.5 border-b border-border last:border-b-0">
+        {/* Name badge (if favorite loaded) */}
+        {row.name && (
+          <span className="inline-block text-xs font-semibold text-primary bg-primary/10 rounded px-2 py-0.5 mb-1.5 truncate max-w-[160px]">
+            {row.name}
+          </span>
+        )}
 
+        {/* Row 1: Weight | Value | KH result | Delete */}
+        <div className="flex items-center gap-2">
           {/* Weight */}
-          <div className="flex items-center gap-0.5">
+          <div className="flex items-center gap-1">
             <input
               type="number"
               inputMode="decimal"
@@ -107,15 +95,15 @@ export function CarbRow({
               onBlur={() => {
                 if (row.name && row.weight > 0) onWeightCommit(row.name, row.weight)
               }}
-              className="w-[52px] h-8 rounded-md border border-input bg-card text-card-foreground px-1 text-sm font-semibold text-right tabular-nums focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+              className="w-[60px] h-10 rounded-lg border border-input bg-card text-card-foreground px-2 text-base font-semibold text-right tabular-nums focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
               aria-label="Gewicht in Gramm"
             />
-            <span className="text-[10px] text-muted-foreground">g</span>
+            <span className="text-sm text-muted-foreground">g</span>
           </div>
 
           {/* Type prefix + Value */}
-          <div className="ml-auto flex items-center gap-0.5">
-            <span className="text-[10px] text-muted-foreground font-medium">
+          <div className="ml-auto flex items-center gap-1">
+            <span className="text-sm text-muted-foreground font-medium">
               {row.type === "KH100" ? "KH" : row.type === "TEILER" ? "\u00f7" : "\u00d7"}
             </span>
             <input
@@ -127,44 +115,44 @@ export function CarbRow({
               onChange={(e) =>
                 onUpdate(row.id, { value: Number.parseFloat(e.target.value) || 0 })
               }
-              className="w-[48px] h-8 rounded-md border border-input bg-card text-card-foreground px-1 text-sm text-right tabular-nums focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+              className="w-[60px] h-10 rounded-lg border border-input bg-card text-card-foreground px-2 text-base text-right tabular-nums focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
               aria-label="KH-Wert"
             />
           </div>
 
           {/* = KH result */}
-          <div className="flex items-center gap-0.5">
-            <span className="text-muted-foreground text-[10px]">=</span>
+          <div className="flex items-center gap-1">
+            <span className="text-muted-foreground text-sm">=</span>
             <span
-              className="w-[44px] text-right text-sm font-extrabold text-primary tabular-nums"
+              className="w-[52px] text-right text-base font-extrabold text-primary tabular-nums"
               aria-live="polite"
               aria-label="Berechnete Kohlenhydrate"
             >
               {row.carbs.toFixed(1)}
             </span>
-            <span className="text-[10px] text-muted-foreground">g</span>
+            <span className="text-sm text-muted-foreground">g</span>
           </div>
 
           {/* Delete */}
           <button
             type="button"
             onClick={() => onDelete(row.id)}
-            className="h-7 w-7 shrink-0 flex items-center justify-center rounded text-muted-foreground active:text-destructive transition-colors"
+            className="h-8 w-8 shrink-0 flex items-center justify-center rounded-lg text-muted-foreground active:text-destructive transition-colors"
             title="Entfernen"
             aria-label="Eintrag entfernen"
           >
-            <X className="h-3.5 w-3.5" />
+            <X className="h-4 w-4" />
           </button>
         </div>
 
         {/* Row 2: Type chips + Star chip */}
-        <div className="flex items-center gap-1 mt-1.5">
+        <div className="flex items-center gap-1.5 mt-2">
           {TYPE_ORDER.map((t) => (
             <button
               key={t}
               type="button"
               onClick={() => handleTypeChange(t)}
-              className={`h-6 px-2 rounded-full text-[10px] font-semibold transition-colors ${
+              className={`h-7 px-3 rounded-full text-xs font-semibold transition-colors ${
                 row.type === t
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground active:bg-muted/70"
@@ -178,19 +166,19 @@ export function CarbRow({
           <button
             type="button"
             onClick={() => setStarOpen(true)}
-            className={`h-6 w-6 flex items-center justify-center rounded-full transition-colors ml-auto ${
+            className={`h-7 w-7 flex items-center justify-center rounded-full transition-colors ml-auto ${
               isFavorited
                 ? "bg-amber-100 text-amber-600"
                 : "bg-muted text-muted-foreground active:bg-muted/70"
             }`}
             aria-label="Favoriten"
           >
-            <Star className={`h-3 w-3 ${isFavorited ? "fill-amber-500" : ""}`} />
+            <Star className={`h-3.5 w-3.5 ${isFavorited ? "fill-amber-500" : ""}`} />
           </button>
         </div>
       </div>
 
-      {/* Star overlay — centered modal */}
+      {/* Star overlay -- centered modal */}
       {starOpen && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
@@ -220,7 +208,7 @@ export function CarbRow({
             {favorites.length > 0 && (
               <>
                 <div className="border-t border-border my-2" />
-                <p className="px-3 py-1 text-[10px] text-muted-foreground font-semibold uppercase tracking-wide">
+                <p className="px-3 py-1.5 text-xs text-muted-foreground font-semibold uppercase tracking-wide">
                   Favorit laden
                 </p>
                 <div className="max-h-[40vh] overflow-y-auto -mx-1 px-1">
@@ -237,7 +225,7 @@ export function CarbRow({
                       <span className="font-medium text-card-foreground truncate">
                         {fav.name}
                       </span>
-                      <span className="text-[11px] text-muted-foreground ml-2 shrink-0">
+                      <span className="text-xs text-muted-foreground ml-2 shrink-0">
                         {getTypeHint(fav)}
                       </span>
                     </button>
